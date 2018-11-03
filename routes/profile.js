@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
 				.json({
 					status: true,
 					data: data,
-					message: 'retrieved all chats'
+					message: 'retrieved profile of current user'
 				});
 		})
 		.catch(function (err) {

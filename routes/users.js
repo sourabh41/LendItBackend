@@ -1,16 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
+// get all users, basically just to test db connection
 router.get('/', function(req, res, next) {
-	if (req.session.rollno == null) {
-		res.status(200)
-			.json({
-				status: false,
-				message: 'not logged in'
-			});
-		return;
-	}
 	req.db.many('select * from users')
 		.then(function (data) {
 			res.status(200)

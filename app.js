@@ -24,10 +24,10 @@ var promise = require('bluebird');
 var options = { promiseLib: promise };
 var pgp = require('pg-promise')(options);
 var cn = {
-    host: 'localhost',
-    port: 5090,
-    database: 'LendIt',
-    user: 'sourabh',
+    host: 'sl2-108.cse.iitb.ac.in',
+    port: 6148,
+    database: 'lendit',
+    user: 'bhaveshd',
 };
 var db = pgp(cn);
 
@@ -52,35 +52,16 @@ var logoutRouter = require('./routes/logout');
 app.use('/logout', logoutRouter);
 
 var itemsRouter = require('./routes/items');
-app.use('/items', itemsRouter)
+app.use('/items', itemsRouter);
 
 var lendingsRouter = require('./routes/lendings');
-app.use('/lendings', lendingsRouter)
-
-var requestsRouter = require('./routes/requests');
-app.use('/requests', requestsRouter)
-
-var myItemsRouter = require('./routes/myItems');
-app.use('/myItems', myItemsRouter)
-
-var messagesRouter = require('./routes/messages');
-app.use('/messages', messagesRouter)
-
-var chatRouter = require('./routes/chat');
-app.use('/chat', chatRouter)
-
-var itemRouter = require('./routes/item');
-app.use('/item', itemRouter)
-
-var lendingRouter = require('./routes/lending');
-app.use('/lending', lendingRouter)
-
-var requestRouter = require('./routes/request');
-app.use('/request', requestRouter)
+app.use('/lendings', lendingsRouter);
 
 var profileRouter = require('./routes/profile');
-app.use('/profile', profileRouter)
+app.use('/profile', profileRouter);
 
+var chatsRouter = require('./routes/chats');
+app.use('/chats', chatsRouter);
 
 //--------------------------------------------------------------------------------
 
