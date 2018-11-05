@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.many('select * from post where post.thread_id = $1', [req.query.thread_id])
+	req.db.any('select * from post where post.thread_id = $1', [req.query.thread_id])
 		.then(function (data) {	
 			res.status(200)
 				.json({
@@ -36,7 +36,7 @@ router.get('/all', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.many('select * from conversation, item where conversation.item_id = item.item_id and (item.owner_id = $1 or conversation.borrower_id = $1)', [req.session.rollno])
+	req.db.any('select * from conversation, item where conversation.item_id = item.item_id and (item.owner_id = $1 or conversation.borrower_id = $1)', [req.session.rollno])
 		.then(function (data) {	
 			res.status(200)
 				.json({

@@ -3,7 +3,7 @@ var router = express.Router();
 
 // get all users, basically just to test db connection
 router.get('/', function(req, res, next) {
-	req.db.many('select * from users')
+	req.db.any('select * from users')
 		.then(function (data) {
 			res.status(200)
 				.json({

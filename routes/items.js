@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.many('select * from item where item_id = $1', [req.query.item_id])
+	req.db.one('select * from item where item_id = $1', [req.query.item_id])
 		.then(function (data) {	
 			res.status(200)
 				.json({
@@ -37,13 +37,13 @@ router.get('/all', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.many('select * from item')
+	req.db.any('select * from item where item.owner_id != $1', [req.session.rollno])
 		.then(function (data) {
 			res.status(200)
 				.json({
 					status: true,
 					data: data,
-					message: 'retrieved all items'
+					message: 'retrieved all items except those added by current user'
 				});
 		})
 		.catch(function (err) {
@@ -62,7 +62,7 @@ router.get('/my', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.many('select * from item where item.owner_id = $1', [req.session.rollno])
+	req.db.any('select * from item where item.owner_id = $1', [req.session.rollno])
 		.then(function (data) {	
 			res.status(200)
 				.json({

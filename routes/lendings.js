@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.many('select * from lending, item where lending.item_id = item.item_id and lending.item_id = $1 and lending.borrower_id = $2 and lending.request_timestamp = $3', [parseInt(req.query.item_id), req.query.borrower_id, req.query.request_timestamp])
+	req.db.one('select * from lending, item where lending.item_id = item.item_id and lending.item_id = $1 and lending.borrower_id = $2 and lending.request_timestamp = $3', [req.query.item_id, req.query.borrower_id, req.query.request_timestamp])
 		.then(function (data) {	
 			res.status(200)
 				.json({
@@ -35,7 +35,7 @@ router.get('/all', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.many('select * from lending, item where lending.item_id = item.item_id and lending.borrower_id = $1', [req.session.rollno])
+	req.db.any('select * from lending, item where lending.item_id = item.item_id and lending.borrower_id = $1', [req.session.rollno])
 		.then(function (data) {	
 			res.status(200)
 				.json({
@@ -59,7 +59,7 @@ router.get('/requests', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.many('select * from lending, item where lending.item_id = item.item_id and item.owner_id = $1', [req.session.rollno])
+	req.db.any('select * from lending, item where lending.item_id = item.item_id and item.owner_id = $1', [req.session.rollno])
 		.then(function (data) {	
 			res.status(200)
 				.json({
