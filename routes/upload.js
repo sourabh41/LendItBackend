@@ -11,7 +11,7 @@ var Storage = multer.diskStorage({
         callback(null, "./public/images/Items");
     },
     filename: function(req, file, callback) {
-        callback(null,file.originalname+"_"+file.fieldname);
+        callback(null,file.fieldname+"_"+file.originalname);
     }
 });
 
@@ -27,7 +27,7 @@ var upload = multer({
 });
 
 
-router.post('/', function(req, res, next) {
+router.post('/item', function(req, res, next) {
 	/*if (req.session.rollno == null) {
 		res.status(200)
 			.json({
@@ -45,7 +45,7 @@ router.post('/', function(req, res, next) {
          if (err) {
              return res.json({
 				status: false,
-				message: 'File Upload Failed'
+				message: 'Image Upload Failed'
 			});
          }
          else{
@@ -55,6 +55,45 @@ router.post('/', function(req, res, next) {
          	        	.json({
          	        		status: true,
          	        		message: 'Photos Uploaded Successfully'
+         	        	});		    
+         	        })
+         	    .catch(function (err) {
+         			return next(err);
+         		});
+         	
+         }
+     });
+});
+
+
+router.post('/profile', function(req, res, next) {
+	/*if (req.session.rollno == null) {
+		res.status(200)
+			.json({
+				status: false,
+				message: 'not logged in'
+			});
+		return;
+	}*/
+
+	
+	// req.body.name is fieldname (name field in Form)
+
+	upload.single(req.body.item_id)(req, res, function(err) {
+		 //console.log(req.file);
+         if (err) {
+             return res.json({
+				status: false,
+				message: 'Profile Photo Upload Failed'
+			});
+         }
+         else{
+         	req.db.none('update users set dp = $1 where rollno = $2',[req.file.originalname,req.session.rollno])
+         		.then(function () {
+         	        res.status(200)
+         	        	.json({
+         	        		status: true,
+         	        		message: 'Profile Picture Uploaded Successfully'
          	        	});		    
          	        })
          	    .catch(function (err) {
