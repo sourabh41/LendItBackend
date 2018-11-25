@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.one('select * from users where users.rollno = $1', [req.session.rollno])
+	req.db.any('select * from users where users.rollno = $1', [req.session.rollno])
 		.then(function (data) {	
 			res.status(200)
 				.json({
