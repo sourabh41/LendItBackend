@@ -7,6 +7,9 @@ var session = require('express-session');
 
 var app = express();
 
+// For static Links
+app.use(express.static('public'))
+
 app.use(logger('short'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -62,6 +65,9 @@ app.use('/profile', profileRouter);
 
 var chatsRouter = require('./routes/chats');
 app.use('/chats', chatsRouter);
+
+var uploadRouter = require('./routes/upload');
+app.use('/upload',uploadRouter);
 
 //--------------------------------------------------------------------------------
 
