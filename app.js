@@ -66,8 +66,9 @@ app.use('/profile', profileRouter);
 var chatsRouter = require('./routes/chats');
 app.use('/chats', chatsRouter);
 
-var uploadRouter = require('./routes/upload');
-app.use('/upload',uploadRouter);
+
+
+
 
 //--------------------------------------------------------------------------------
 

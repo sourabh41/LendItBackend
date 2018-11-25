@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.one('select * from item where item_id = $1', [req.query.item_id])
+	req.db.any('select item.item_id, item.name as item_name, owner_id, description, available,title,content,temp.name as reviewer_name,stars from item left join (select * from item_review, users where user_id=users.rollno) as temp on item.item_id = temp.item_id where item.item_id = $1', [req.query.item_id])
 		.then(function (data) {	
 			res.status(200)
 				.json({
@@ -97,6 +97,31 @@ router.post('/add', function(req, res, next) {
 	        	});		    
 	        })
 	    .catch(function (err) {
+			return next(err);
+		});
+
+
+});
+
+router.get('/images', function(req, res, next) {
+	if (req.session.rollno == null) {
+		res.status(200)
+			.json({
+				status: false,
+				message: 'not logged in'
+			});
+		return;
+	}
+	req.db.any('select photo from photo where item_id = $1', [req.query.item_id])
+		.then(function (data) {	
+			res.status(200)
+				.json({
+					status: true,
+					data: data,
+					message: 'retrieved photos of given item'
+				});
+		})
+		.catch(function (err) {
 			return next(err);
 		});
 });

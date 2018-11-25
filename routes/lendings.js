@@ -35,7 +35,7 @@ router.get('/all', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.any('select * from lending, item where lending.item_id = item.item_id and lending.borrower_id = $1', [req.session.rollno])
+	req.db.any('select * from lending, item, users where lending.borrower_id = users.rollno and  lending.item_id = item.item_id and lending.borrower_id = $1', [req.session.rollno])
 		.then(function (data) {	
 			res.status(200)
 				.json({
