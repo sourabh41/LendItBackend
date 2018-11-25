@@ -37,7 +37,7 @@ router.get('/all', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.any('select * from item where item.owner_id != $1', [req.session.rollno])
+	req.db.any('with temp as (select item_id, avg(stars) as stars, count(stars) as count from item_review group by item_id), temp2 as (select item.item_id, item.name, item.type, item.owner_id, item.available, temp.stars, temp.count from item left outer join temp on item.item_id=temp.item_id) select temp2.item_id, temp2.name as item_name, temp2.type, temp2.available, temp2.stars, temp2.count, users.name, min(photo.photo) as photo from temp2 left outer join photo on photo.item_id=temp2.item_id, users where users.rollno = temp2.owner_id and temp2.owner_id != $1 group by temp2.item_id,item_name,type,available,stars,count,users.name;', [req.session.rollno])
 		.then(function (data) {
 			res.status(200)
 				.json({
@@ -62,7 +62,7 @@ router.get('/my', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.any('select * from item where item.owner_id = $1', [req.session.rollno])
+	req.db.any('with temp as (select item_id, avg(stars) as stars, count(stars) as count from item_review group by item_id), temp2 as (select item.item_id, item.name, item.type, item.owner_id, item.available, temp.stars, temp.count from item left outer join temp on item.item_id=temp.item_id) select temp2.item_id, temp2.name as item_name, temp2.type, temp2.available, temp2.stars, temp2.count, users.name, min(photo.photo) as photo from temp2 left outer join photo on photo.item_id=temp2.item_id, users where users.rollno = temp2.owner_id and temp2.owner_id = $1 group by temp2.item_id,item_name,type,available,stars,count,users.name;', [req.session.rollno])
 		.then(function (data) {	
 			res.status(200)
 				.json({

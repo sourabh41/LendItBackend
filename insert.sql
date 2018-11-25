@@ -24,4 +24,4 @@ insert into post (thread_id, sender_id, text) values (1, '160050106', 'Hi, Will 
 insert into post (thread_id, sender_id, text) values (1, '160050108', 'Yes, Definitely');
 insert into post (thread_id, sender_id, text) values (1, '160050106', 'When can I come to collect this?');
 insert into post (thread_id, sender_id, text) values (2, '160050108', 'Hi, Does your calculator support integration formulae?');
-insert into post (thread_id, sender_id, text) values (2, '160050050', 'No, unfortunately it does not');
+insert into post (thread_id, sender_id, text) values (2, '160050009', 'No, unfortunately it does not');
