@@ -60,7 +60,7 @@ create table lending(
 	start_timestamp timestamp,
 	end_timestamp timestamp,
 	status lending_status default 'PENDING',
-	user_review_stars integer,
+	user_review_stars integer check (stars >= 0 and stars <= 5),
 	user_review_title varchar(64),
 	user_review_content varchar(256),
 	primary key(item_id, borrower_id, request_timestamp)
