@@ -1,6 +1,28 @@
 var express = require('express');
 var router = express.Router();
+var pgp = require('pg-promise');
 
+var path = require('path');
+var multer = require('multer');
+var Storage = multer.diskStorage({
+    destination: function(req, file, callback) {
+        callback(null, "./public/images/Items");
+    },
+    filename: function(req, file, callback) {
+        callback(null,Date.now()+"_"+file.originalname);
+    }
+});
+
+var upload = multer({
+    storage: Storage,
+    fileFilter: function (req, file, callback) {
+        var ext = path.extname(file.originalname);
+        if(ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
+            return callback(new Error('only jpg/png images are allowed'))
+        }
+        callback(null, true)
+    },
+});
 
 // Specific item by item_id
 router.get('/', function(req, res, next) {
@@ -79,7 +101,18 @@ router.get('/my', function(req, res, next) {
 
 
 // To add a new item
-router.post('/add', function(req, res, next) {
+
+/*function Inserts(template, data) {
+    if (!(this instanceof Inserts)) {
+        return new Inserts(template, data);
+    }
+    this.rawType = true;
+    this.toPostgres = () => data.map(d => '(' + pgp.as.format(template, d) + ')').join();
+}*/
+
+
+
+router.post('/add',function(req,res,next){
 	if (req.session.rollno == null) {
 		res.status(200)
 			.json({
@@ -88,19 +121,66 @@ router.post('/add', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.none('insert into item (name,type,owner_id,description,available) values ($1,$2,$3,$4,$5)', [req.body.name, req.body.type, req.session.rollno, req.body.description, req.body.available])
-		.then(function () {
-	        res.status(200)
-	        	.json({
-	        		status: true,
-	        		message: 'item added'
-	        	});		    
-	        })
-	    .catch(function (err) {
+	//console.log(req);
+	req.db.none('insert into item (name,type,owner_id,description,available) values ($1,$2,$3,$4,$5)', [req.body.item_name, req.body.type, req.session.rollno, req.body.description, req.body.available])
+		.then(function(){
+			req.db.one('select item_id from item where name=$1 and type=$2 and owner_id=$3 and description=$4 and available=$5 order by item_id desc limit 1;',[req.body.item_name,req.body.type,req.session.rollno, req.body.description, req.body.available])
+			.then(function(data){
+
+				
+    			upload.array("item_image",5)(req, res, function(err) {
+    				console.log(req.files);
+    		       	if (err) {
+    		             return res.json({
+    						status: false,
+    						message: 'failed to upload image'
+    					});
+    		        }
+    		        else if(req.files != null){
+
+    		         	const list = [];
+    		         	var obj={};
+    		         	for (var i;i<req.files.length;i++){
+    		         		obj.item_id = data['item_id'];
+    		         		obj.photo = req.files[i].path.substring(6);
+    		         		list.push(obj);
+    		         	}
+    		         	//var values = new Inserts('${item_id}, ${photo}', list);
+    		         	
+
+    		         	req.db.none(pgp.helpers.insert(list, ['item_id', 'photo'], 'photo')
+    		         		.then(function () {
+    		         	        res.status(200)
+    		         	        	.json({
+    		         	        		status: true,
+    		         	        		message: 'item added successfully'
+    		         	        	});		    
+    		         	        })
+    		         	    .catch(function (err) {
+    		         			return next(err);
+    		         		});
+    		         	
+    		        }
+    		        else{
+    		         	res.status(200)
+							.json({
+								status: true,
+								message: 'item added successfully'
+							});
+    		       	}
+    		     });
+			
+    			
+			})
+			.catch(function (err) {
+				return next(err);
+			});
+
+			
+		})
+		.catch(function (err) {
 			return next(err);
 		});
-
-
 });
 
 router.get('/images', function(req, res, next) {
