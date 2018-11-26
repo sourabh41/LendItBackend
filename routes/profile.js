@@ -48,6 +48,29 @@ router.get('/', function(req, res, next) {
 		});
 });
 
+router.get('/user', function(req, res, next) {
+	if (req.session.rollno == null) {
+		res.status(200)
+			.json({
+				status: false,
+				message: 'not logged in'
+			});
+		return;
+	}
+	req.db.one('select * from users where users.rollno = $1', [req.query.rollno])
+		.then(function (data) {	
+			res.status(200)
+				.json({
+					status: true,
+					data: data,
+					message: 'retrieved profile of other user'
+				});
+		})
+		.catch(function (err) {
+			return next(err);
+		});
+});
+
 
 router.post('/create', function(req, res, next) {
 	if (req.session.rollno == null) {

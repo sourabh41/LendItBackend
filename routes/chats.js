@@ -77,4 +77,58 @@ router.post('/new',function(req,res,next){
 
 });
 
+router.get('/get',function(req,res,next){
+	if (req.session.rollno == null) {
+		res.status(200)
+			.json({
+				status: false,
+				message: 'not logged in'
+			});
+		return;
+	}
+	console.log(req.query);
+	req.db.one('select thread_id from conversation where item_id=$1 and borrower_id=$2',[req.query.item_id, req.query.borrower_id])
+		.then(function (data) {	
+			res.status(200)
+				.json({
+					status: true,
+					data: data,
+					message: 'conversation exists'
+				});
+			})
+         	.catch(function (err) {
+         		return next(err);
+        });
+
+
+});
+
+router.post('/create',function(req,res,next){
+	if (req.session.rollno == null) {
+		res.status(200)
+			.json({
+				status: false,
+				message: 'not logged in'
+			});
+		return;
+	}
+	req.db.none('insert into conversation (item_id, borrower_id) values ($1, $2)',[req.body.item_id, req.body.borrower_id])
+		.then(function(){
+			req.db.one('select thread_id from conversation where item_id=$1 and borrower_id=$2',[req.body.item_id, req.body.borrower_id])
+				.then(function(data){
+					res.status(200)
+					.json({
+						status: true,
+						data: data,
+						message: 'conversation created'
+					});
+				})
+			})
+         	.catch(function (err) {
+         		return next(err);
+        });
+
+
+});
+
 module.exports = router;
