@@ -52,15 +52,15 @@ create table item_review(
 
 
 
-create type lending_status as enum ('PENDING', 'CANCELLED', 'APPROVED', 'LENDED', 'RETURNED');
+create type lending_status as enum ('PENDING', 'CANCELLED', 'REJECTED', 'APPROVED', 'LENDED', 'RETURNED');
 create table lending(
 	item_id integer references item(item_id),
 	borrower_id varchar(10) references users(rollno),
-	request_timestamp timestamp default now(),
-	start_timestamp timestamp,
-	end_timestamp timestamp,
+	request_timestamp double precision default extract(epoch from now()),
+	start_timestamp double precision,
+	end_timestamp double precision,
 	status lending_status default 'PENDING',
-	user_review_stars integer check (stars >= 0 and stars <= 5),
+	user_review_stars integer check (user_review_stars >= 0 and user_review_stars <= 5),
 	user_review_title varchar(64),
 	user_review_content varchar(256),
 	primary key(item_id, borrower_id, request_timestamp)

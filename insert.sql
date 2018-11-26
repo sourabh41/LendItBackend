@@ -6,7 +6,7 @@ insert into users values ('160050108', 'Bhavesh Dhingra', 'https://www.cse.iitb.
 insert into item (name, type, owner_id, description, available) values ('The Grand Design', 'Book', '160050108', 'A book by Stephen Hawking', true);
 insert into item (name, type, owner_id, description, available) values ('Hyperspace', 'Book', '160050108', 'A book by Michio Kaku on higher dimensions', true);
 insert into item (name, type, owner_id, description, available) values ('Calculator', 'Electronics', '160050009', 'Casio Scientific Calculator with matrix supprt', true);
-insert into item (name, type, owner_id, description, available) values ('Tennis Racket', 'Sports Equipment', '160050050', 'A cool tennis racket in perfect condition', false);
+insert into item (name, type, owner_id, description, available) values ('Tennis Racket', 'Sports Equipment', '160050050', 'A cool tennis racket in perfect condition', true);
 
 insert into photo values (1, 'https://www.cse.iitb.ac.in/~bhaveshd/share/3.png');
 insert into photo values (1, 'https://www.cse.iitb.ac.in/~bhaveshd/share/6.png');
