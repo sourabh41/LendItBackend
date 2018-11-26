@@ -11,7 +11,7 @@ router.get('/borrowings', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.any('select item.name as item_name, lending.item_id, lending.borrower_id, lending.request_timestamp, lending.status, users.name as owner_name from lending, item, users where lending.item_id = item.item_id and item.owner_id = users.rollno and lending.borrower_id = $1', [req.session.rollno])
+	req.db.any('select item.name as item_name, lending.item_id, lending.borrower_id, lending.request_timestamp, lending.status, users.name as owner_name from lending, item, users where lending.item_id = item.item_id and item.owner_id = users.rollno and lending.borrower_id = $1 order by request_timestamp desc', [req.session.rollno])
 		.then(function (data) {	
 			res.status(200)
 				.json({
@@ -68,7 +68,7 @@ router.get('/lendings', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.any('select item.name as item_name, lending.item_id, lending.borrower_id, lending.request_timestamp, lending.status, users.name as borrower_name from lending, item, users where lending.item_id = item.item_id and lending.borrower_id = users.rollno and item.owner_id = $1', [req.session.rollno])
+	req.db.any('select item.name as item_name, lending.item_id, lending.borrower_id, lending.request_timestamp, lending.status, users.name as borrower_name from lending, item, users where lending.item_id = item.item_id and lending.borrower_id = users.rollno and item.owner_id = $1 order by request_timestamp desc', [req.session.rollno])
 		.then(function (data) {	
 			res.status(200)
 				.json({
@@ -181,7 +181,7 @@ router.post('/add', function(req, res, next) {
 			res.status(200)
 				.json({
 					status: false,
-					message: 'List atleast 2 items to start lending'
+					message: 'List atleast 2 items to start borrowing'
 				});
 		}
 	})

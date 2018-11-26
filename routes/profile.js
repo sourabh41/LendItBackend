@@ -158,7 +158,7 @@ router.get('/reviews', function(req, res, next) {
 	}
 	req.db.one('select avg(user_review_stars) as stars, count(user_review_stars) as count from lending where borrower_id = $1', [req.query.rollno])
 		.then(function (data) {	
-			req.db.any('select user_review_stars,user_review_title,user_review_content,owner_id from lending natural join item where borrower_id = $1 and user_review_stars is not null', [req.query.rollno])
+			req.db.any('with temp as (select user_review_stars,user_review_title,user_review_content,owner_id from lending natural join item where borrower_id = $1 and user_review_stars is not null) select * from temp, users where users.rollno = temp.owner_id', [req.query.rollno])
 				.then(function (data1) {
 					res.status(200)
 						.json({
