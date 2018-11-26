@@ -127,4 +127,27 @@ router.get('/images', function(req, res, next) {
 });
 
 
+router.post('/review', function(req, res, next) {
+	if (req.session.rollno == null) {
+		res.status(200)
+			.json({
+				status: false,
+				message: 'not logged in'
+			});
+		return;
+	}
+	req.db.none('insert into item_review values ($1, $2, $3, $4, $5)', [req.body.item_id, req.session.rollno, req.body.stars, req.body.title, req.body.content])
+		.then(function () {	
+			res.status(200)
+				.json({
+					status: true,
+					message: 'review added'
+				});
+		})
+		.catch(function (err) {
+			return next(err);
+		});
+});
+
+
 module.exports = router;
