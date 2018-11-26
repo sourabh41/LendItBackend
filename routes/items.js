@@ -121,7 +121,7 @@ router.post('/add',function(req,res,next){
 			});
 		return;
 	}
-	//console.log(req);
+	console.log(req.body);
 	req.db.none('insert into item (name,type,owner_id,description,available) values ($1,$2,$3,$4,$5)', [req.body.item_name, req.body.type, req.session.rollno, req.body.description, req.body.available])
 		.then(function(){
 			req.db.one('select item_id from item where name=$1 and type=$2 and owner_id=$3 and description=$4 and available=$5 order by item_id desc limit 1;',[req.body.item_name,req.body.type,req.session.rollno, req.body.description, req.body.available])

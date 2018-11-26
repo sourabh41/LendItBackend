@@ -150,11 +150,11 @@ router.post('/add', function(req, res, next) {
 		if(data['num_items']>=2){
 			req.db.one('select count(*) as count from lending where item_id=$1 and borrower_id=$2 and (status = $3 or status = $4 or status = $5)',[req.body.item_id,req.session.rollno,'PENDING', 'APPROVED','LENDED'])
 			.then(function(data1){
-				if(data1['count']>0){
+				if(data1['count'] > 0){
 					res.status(200)
 						.json({
-							status: true,
-							message: 'Request is Already in Progress'
+							status: false,
+							message: 'request already in progress'
 						});
 				}
 				else{
