@@ -156,9 +156,9 @@ router.get('/reviews', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.one('select avg(user_review_stars) as stars, count(user_review_stars) as count from lending where borrower_id = $1', [req.session.rollno])
+	req.db.one('select avg(user_review_stars) as stars, count(user_review_stars) as count from lending where borrower_id = $1', [req.query.rollno])
 		.then(function (data) {	
-			req.db.any('select user_review_stars,user_review_title,user_review_content,owner_id from lending natural join item where borrower_id = $1 and user_review_stars is not null', [req.session.rollno])
+			req.db.any('select user_review_stars,user_review_title,user_review_content,owner_id from lending natural join item where borrower_id = $1 and user_review_stars is not null', [req.query.rollno])
 				.then(function (data1) {
 					res.status(200)
 						.json({
