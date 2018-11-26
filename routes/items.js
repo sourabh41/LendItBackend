@@ -34,18 +34,28 @@ router.get('/', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.any('select item.item_id, item.name as item_name, owner_id, description, available,title,content,temp.name as reviewer_name,stars from item left join (select * from item_review, users where user_id=users.rollno) as temp on item.item_id = temp.item_id where item.item_id = $1', [req.query.item_id])
-		.then(function (data) {	
-			res.status(200)
-				.json({
-					status: true,
-					data: data,
-					message: 'retrieved requested item'
+	
+
+	req.db.one('select item.item_id, item.name as item_name, item.owner_id,item.description,item.available, users.name as owner_name from item,users where item.item_id = $1 and item.owner_id = users.rollno',[req.query.item_id])
+		.then(function (item_data) {	
+			req.db.any('select item_review.item_id, item_review.user_id, item_review.stars, item_review.title, item_review.content, users.name as reviewer_name from item_review,users where item_id = $1 and item_review.user_id = users.rollno',[req.query.item_id])
+				.then(function (review) {
+					res.status(200)
+						.json({
+							status:true,
+							data:item_data,
+							review:review,
+							message : "Item Details Retrieved"
+						});
+				})
+				.catch(function (err) {
+					return next(err);
 				});
 		})
 		.catch(function (err) {
 			return next(err);
 		});
+
 });
 
 
