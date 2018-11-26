@@ -150,4 +150,29 @@ router.post('/review', function(req, res, next) {
 });
 
 
+
+
+router.post('/updatestatus', function(req, res, next) {
+	if (req.session.rollno == null) {
+		res.status(200)
+			.json({
+				status: false,
+				message: 'not logged in'
+			});
+		return;
+	}
+	req.db.none('update item set available=$1 where item_id=$2', [req.body.status, req.body.item_id])
+		.then(function () {	
+			res.status(200)
+				.json({
+					status: true,
+					message: 'status updated'
+				});
+		})
+		.catch(function (err) {
+			return next(err);
+		});
+});
+
+
 module.exports = router;
