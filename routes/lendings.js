@@ -34,7 +34,7 @@ router.get('/borrowing', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.one('select item.name as item_name, photo.photo as photo, lending.item_id, lending.borrower_id, lending.request_timestamp, lending.start_timestamp, lending.end_timestamp, lending.status, lending.user_review_stars, lending.user_review_title, lending.user_review_content, users.name as owner_name from lending, item left outer join photo on item.item_id = photo.item_id, users where lending.item_id = item.item_id and item.owner_id = users.rollno and lending.item_id = $1 and lending.borrower_id = $2 and abs(lending.request_timestamp - $3) < 0.1 limit 1', [req.query.item_id, req.query.borrower_id, req.query.request_timestamp])
+	req.db.one('select item.name as item_name, photo.photo as photo, lending.item_id, lending.borrower_id, lending.request_timestamp, lending.start_timestamp, lending.end_timestamp, lending.status, lending.user_review_stars, lending.user_review_title, lending.user_review_content, users.name as owner_name, users.rollno as owner_id from lending, item left outer join photo on item.item_id = photo.item_id, users where lending.item_id = item.item_id and item.owner_id = users.rollno and lending.item_id = $1 and lending.borrower_id = $2 and abs(lending.request_timestamp - $3) < 0.1 limit 1', [req.query.item_id, req.query.borrower_id, req.query.request_timestamp])
 		.then(function (data) {
 			req.db.any('select * from item_review where item_id=$1 and user_id=$2', [data.item_id, req.session.rollno])
 				.then(function (data1) {
