@@ -144,17 +144,34 @@ router.post('/add', function(req, res, next) {
 			});
 		return;
 	}
-	req.db.none('insert into lending (item_id, borrower_id) values ($1, $2)', [req.body.item_id, req.session.rollno])
-		.then(function () {	
+
+	req.db.one('select count(*) as num_items from item where owner_id=$1',[req.session.rollno])
+	.then(function(data){
+		if(data['num_items']>=2){
+			req.db.none('insert into lending (item_id, borrower_id) values ($1, $2)', [req.body.item_id, req.session.rollno])
+				.then(function () {	
+					res.status(200)
+						.json({
+							status: true,
+							message: 'lending created'
+						});
+				})
+				.catch(function (err) {
+					return next(err);
+				});
+		}
+		else{
 			res.status(200)
 				.json({
 					status: true,
-					message: 'lending created'
+					message: 'List atleast 2 items to start lending'
 				});
-		})
-		.catch(function (err) {
-			return next(err);
-		});
+		}
+	})
+	.catch(function (err) {
+		return next(err);
+	});
+	
 });
 
 router.post('/review', function(req, res, next) {

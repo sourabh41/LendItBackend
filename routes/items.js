@@ -148,7 +148,7 @@ router.post('/add',function(req,res,next){
     		         	//var values = new Inserts('${item_id}, ${photo}', list);
     		         	
 
-    		         	req.db.none(pgp.helpers.insert(list, ['item_id', 'photo'], 'photo')
+    		         	req.db.none(pgp.helpers.insert(list, ['item_id', 'photo'], 'photo'))
     		         		.then(function () {
     		         	        res.status(200)
     		         	        	.json({
