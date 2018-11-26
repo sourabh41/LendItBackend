@@ -175,4 +175,51 @@ router.post('/updatestatus', function(req, res, next) {
 });
 
 
+router.get('/types', function(req, res, next) {
+	if (req.session.rollno == null) {
+		res.status(200)
+			.json({
+				status: false,
+				message: 'not logged in'
+			});
+		return;
+	}
+	req.db.one('select enum_range(enum_first(null::item_type),null::item_type)')
+		.then(function (data) {	
+			res.status(200)
+				.json({
+					status: true,
+					data: data,
+					message: 'item types retrieved'
+				});
+		})
+		.catch(function (err) {
+			return next(err);
+		});
+});
+
+
+router.post('/addtype', function(req, res, next) {
+	if (req.session.rollno == null) {
+		res.status(200)
+			.json({
+				status: false,
+				message: 'not logged in'
+			});
+		return;
+	}
+	req.db.none('alter type item_type add value $1', [req.body.type])
+		.then(function () {	
+			res.status(200)
+				.json({
+					status: true,
+					message: 'added item type'
+				});
+		})
+		.catch(function (err) {
+			return next(err);
+		});
+});
+
+
 module.exports = router;
