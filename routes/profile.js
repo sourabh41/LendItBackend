@@ -97,7 +97,7 @@ router.post('/edit', function(req, res, next) {
 				status: false,
 				message: 'failed to upload dp'
 			});
-         } else{
+         } else {
          	var query;
          	var params;
          	if (req.file == null) {

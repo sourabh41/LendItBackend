@@ -154,7 +154,7 @@ router.post('/add', function(req, res, next) {
 					res.status(200)
 						.json({
 							status: false,
-							message: 'request already in progress'
+							message: 'Request already in progress'
 						});
 				}
 				else{
@@ -180,7 +180,7 @@ router.post('/add', function(req, res, next) {
 		else{
 			res.status(200)
 				.json({
-					status: true,
+					status: false,
 					message: 'List atleast 2 items to start lending'
 				});
 		}
