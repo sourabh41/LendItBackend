@@ -148,17 +148,34 @@ router.post('/add', function(req, res, next) {
 	req.db.one('select count(*) as num_items from item where owner_id=$1',[req.session.rollno])
 	.then(function(data){
 		if(data['num_items']>=2){
-			req.db.none('insert into lending (item_id, borrower_id) values ($1, $2)', [req.body.item_id, req.session.rollno])
-				.then(function () {	
+			req.db.one('select count(*) as count from lending where item_id=$1 and borrower_id=$2 and (status = $3 or status = $4 or status = $5)',[req.body.item_id,req.session.rollno,'PENDING', 'APPROVED','LENDED'])
+			.then(function(data1){
+				if(data1['count']>0){
 					res.status(200)
 						.json({
 							status: true,
-							message: 'lending created'
+							message: 'Request is Already in Progress'
 						});
-				})
-				.catch(function (err) {
-					return next(err);
-				});
+				}
+				else{
+					req.db.none('insert into lending (item_id, borrower_id) values ($1, $2)', [req.body.item_id, req.session.rollno])
+						.then(function () {	
+							res.status(200)
+								.json({
+									status: true,
+									message: 'lending created'
+								});
+						})
+						.catch(function (err) {
+							return next(err);
+						});
+				}
+			})
+			.catch(function (err) {
+				return next(err);
+			});
+
+			
 		}
 		else{
 			res.status(200)
